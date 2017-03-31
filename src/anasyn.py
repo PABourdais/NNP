@@ -213,13 +213,11 @@ def instr(lexical_analyser):
 		logger.error("Unknown Instruction <"+ lexical_analyser.get_value() +">!")
 		raise AnaSynException("Unknown Instruction <"+ lexical_analyser.get_value() +">!")
 
-###Lingling
+###B.23 Lingling
 def appelProc(lexical_analyser):
 	ident = lexical_analyser.acceptIdentifier()
 	lexical_analyser.acceptCharacter("(")
-	if lexical_analyser.isCharacter(")"):
-		lexical_analyser.acceptCharacter(")")
-	else:
+	if not lexical_analyser.isCharacter(")"):
 		listePe(lexical_analyser);
 	lexical_analyser.acceptCharacter(")")
 	
@@ -376,6 +374,14 @@ def elemPrim(lexical_analyser):
 		logger.error("Unknown Value!")
 		raise AnaSynException("Unknown Value!")
 
+## B.36 Lingling
+def appelFonct(lexical_analyser):
+	ident = lexical_analyser.acceptIdentifier()
+	lexical_analyser.acceptCharacter("(")
+	if not lexical_analyser.isCharacter(")"):
+		listePe(lexical_analyser)
+	lexical_analyser.acceptCharacter(")")
+	
 def valeur(lexical_analyser):
 	if lexical_analyser.isInteger():
 		entier = lexical_analyser.acceptInteger()

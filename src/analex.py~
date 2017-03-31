@@ -245,6 +245,10 @@ class LexicalAnalyser(object):
 			elif c == ':': # affectation
 				beginColIndex = colIndex
 				colIndex = colIndex + 1
+				pprint.pprint(line)
+
+				print(colIndex)
+				
 				c = line[colIndex]
 				if c == '=':
 					# record :=
