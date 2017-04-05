@@ -17,13 +17,17 @@ LOGGING_LEVEL = logging.DEBUG
 identifierTable = []
 tmpVectorTable = []
 
-class Identificateur #Definition de la classe Identificateur
-	
+class Identificateur #Definition de la classe Identificateur	
 	#Constructeur de la classe Identificateur
-	def __init__(self, nom, nature, adresse):
+	def __init__(self, nom):
 		self.nom = nom
-		self.nature = nature
-		self.adresse = adresse
+		self.nature = ""
+		self.adresse = ""
+		self.taille = ""
+	
+	def setNature():
+
+	def setNom
 
 class AnaSynException(Exception):
 	def __init__(self, value):

@@ -19,10 +19,20 @@ tmpVectorTable = []
 
 class Identificateur #Definition de la classe Identificateur	
 	#Constructeur de la classe Identificateur
-	def __init__(self, nom, nature, adresse):
+	def __init__(self, nom):
 		self.nom = nom
+		self.nature = ""
+		self.adresse = ""
+		self.taille = ""
+	
+	def setNature(self, nature):
 		self.nature = nature
+	
+	def setAdresse(self, adresse):
 		self.adresse = adresse
+
+	def setTaille(self, taille):
+		self.taille = taille
 
 class AnaSynException(Exception):
 	def __init__(self, value):
