@@ -14,6 +14,8 @@ logger = logging.getLogger('anasyn')
 DEBUG = False
 LOGGING_LEVEL = logging.DEBUG
 
+identifierTable = []
+tmpVectorTable = []
 
 class AnaSynException(Exception):
 	def __init__(self, value):
@@ -139,15 +141,23 @@ def mode(lexical_analyser):
 		logger.debug("in parameter")
 
 def nnpType(lexical_analyser):
+	global tmpVectorTable
 	if lexical_analyser.isKeyword("integer"):
 		lexical_analyser.acceptKeyword("integer")
+		#identifierTable.append([tmpVectorTable,"integer"])
+		tmpVectorTable.append("integer")
+		identifierTable.append([tmpVectorTable])
 		logger.debug("integer type")
 	elif lexical_analyser.isKeyword("boolean"):
 		lexical_analyser.acceptKeyword("boolean")
+		#identifierTable.append([tmpVectorTable,"boolean"])
+		tmpVectorTable.append("boolean")
+		identifierTable.append([tmpVectorTable])
 		logger.debug("boolean type")                
 	else:
 		logger.error("Unknown type found <"+ lexical_analyser.get_value() +">!")
 		raise AnaSynException("Unknown type found <"+ lexical_analyser.get_value() +">!")
+	tmpVectorTable=[]
 
 def partieDeclaProc(lexical_analyser):
 	listeDeclaVar(lexical_analyser)
@@ -166,6 +176,7 @@ def declaVar(lexical_analyser):
 
 def listeIdent(lexical_analyser):
 	ident = lexical_analyser.acceptIdentifier()
+	tmpVectorTable.append([ident])
 	logger.debug("identifier found: "+str(ident))
 
 	if lexical_analyser.isCharacter(","):
@@ -514,7 +525,7 @@ def main():
 		
         if args.show_ident_table:
                 print "------ IDENTIFIER TABLE ------"
-                #print str(identifierTable)
+                print str(identifierTable)
                 print "------ END OF IDENTIFIER TABLE ------"
 
 
