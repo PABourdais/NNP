@@ -17,6 +17,13 @@ LOGGING_LEVEL = logging.DEBUG
 identifierTable = []
 tmpVectorTable = []
 
+class Identificateur #Definition de la classe Identificateur	
+	#Constructeur de la classe Identificateur
+	def __init__(self, nom, nature, adresse):
+		self.nom = nom
+		self.nature = nature
+		self.adresse = adresse
+
 class AnaSynException(Exception):
 	def __init__(self, value):
 		self.value = value
@@ -34,6 +41,7 @@ def program(lexical_analyser):
 	
 def specifProgPrinc(lexical_analyser):
 	lexical_analyser.acceptKeyword("procedure")
+	#On a trouve le nom de du programme
 	ident = lexical_analyser.acceptIdentifier()
 	logger.debug("Name of program : "+ident)
 	
@@ -175,6 +183,7 @@ def declaVar(lexical_analyser):
 	lexical_analyser.acceptCharacter(";")
 
 def listeIdent(lexical_analyser):
+	#On a trouve une variable
 	ident = lexical_analyser.acceptIdentifier()
 	tmpVectorTable.append([ident])
 	logger.debug("identifier found: "+str(ident))
