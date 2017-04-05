@@ -12,6 +12,8 @@
 //------------------------------------------------------
 procedure pp is
   i,j:integer;
+	b,k,v,jdrtdt:boolean;
+	a:integer;
 begin
   i:=1;
   //Invariant :
