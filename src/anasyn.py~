@@ -17,6 +17,35 @@ LOGGING_LEVEL = logging.DEBUG
 identifierTable = []
 tmpVectorTable = []
 
+class TableSymbole: #Definition de la classe Symbole
+	def __init__(self):
+		self.table_symbole = []
+
+	def afficherTableSymbole(self):
+		for i in self.table_symbole :
+			i.afficherScope()
+
+	def ajoutScope(self,tableau_identificateur):
+		for j in tableau_identificateur:
+			self.table_symbole.append(j)
+
+class Scope: #Definition de la classe Scope
+	#Constructeur de la classe Scope
+	def __init__(self, nom):
+		self.nom = nom 
+		self.tableau_identificateur = []
+
+	def ajoutIdentificateur(self,identifierTable):
+		for i in identifierTable:
+			self.tableau_identificateur.append(i)
+
+	def afficherScope(self):
+		print str (self.nom)	
+		print str("coucou1")			
+		for i in self.tableau_identificateur:
+			print str("coucou1")
+			i.afficherIdentificateur()
+
 class Identificateur: #Definition de la classe Identificateur	
 	#Constructeur de la classe Identificateur
 	def __init__(self, nom):
@@ -24,6 +53,7 @@ class Identificateur: #Definition de la classe Identificateur
 		self.nature = None
 		self.adresse = None
 		self.taille = None
+		self.scope = None
 	
 	def setNature(self, nature):
 		self.nature = nature
@@ -33,6 +63,13 @@ class Identificateur: #Definition de la classe Identificateur
 
 	def setTaille(self, taille):
 		self.taille = taille
+
+	def setScope(self, scope):
+		self.scope = scope
+	
+	def afficherIdentificateur(self):
+		print str("coucou2")
+		print str (self.nom+self.nature)
 
 class AnaSynException(Exception):
 	def __init__(self, value):
@@ -78,7 +115,7 @@ def partieDecla(lexical_analyser):
                         listeDeclaVar(lexical_analyser)
         
         else:
-                listeDeclaVar(lexical_analyser)                
+                listeDeclaVar(lexical_analyser)             
 
 def listeDeclaOp(lexical_analyser):
 	declaOp(lexical_analyser)
@@ -93,8 +130,14 @@ def declaOp(lexical_analyser):
 		fonction(lexical_analyser)
 
 def procedure(lexical_analyser):
+	global tablesymbole
+	global scope
 	lexical_analyser.acceptKeyword("procedure")
+	#On a trouve le nom d'une procedure
 	ident = lexical_analyser.acceptIdentifier()
+	scope = Scope(ident)
+	tablesymbole = TableSymbole()
+	tablesymbole.ajoutScope(scope)
 	logger.debug("Name of procedure : "+ident)
        
 	partieFormelle(lexical_analyser)
@@ -159,8 +202,11 @@ def mode(lexical_analyser):
 		logger.debug("in parameter")
 
 def nnpType(lexical_analyser):
+	global tablesymbole
+	global scope
 	global tmpVectorTable
 	global identificateur
+	global identifierTable
 	if lexical_analyser.isKeyword("integer"):
 		lexical_analyser.acceptKeyword("integer")
 		#On modifie la nature de l'identificateur en integer
@@ -170,16 +216,20 @@ def nnpType(lexical_analyser):
 		logger.debug("integer type")
 	elif lexical_analyser.isKeyword("boolean"):
 		lexical_analyser.acceptKeyword("boolean")
-		tmpVectorTable.append("boolean")
 		#On modifie la nature de l'identificateur en boolean
-		for i in tmpVectorTable:			
+		for i in tmpVectorTable:		
 			i.setNature("boolean")
-			identifierTable.append(i) 
+			identifierTable.append(i)
+		scope.ajoutIdentificateur(identifierTable)
+		tablesymbole.ajoutScope(scope.tableau_identificateur)
+		#tablesymbole.tableau_identificateur.append(identifierTable)
 		logger.debug("boolean type")            
 	else:
 		logger.error("Unknown type found <"+ lexical_analyser.get_value() +">!")
 		raise AnaSynException("Unknown type found <"+ lexical_analyser.get_value() +">!")
+	
 	tmpVectorTable=[]
+
 
 
 def partieDeclaProc(lexical_analyser):
@@ -558,8 +608,12 @@ def main():
 		
         if args.show_ident_table:
                 #print "------ IDENTIFIER TABLE ------"
-								for i in identifierTable :
-									print str(i.nom +" "+i.nature)
+								#for j in tablesymbole.table_symbole :
+									#j.afficherScope()
+								tablesymbole.afficherTableSymbole()
+								#for i in identifierTable :
+								#	print str(i.nom +" "+i.nature)
+								#ident local a une procedure pp
                 #print str(identifierTable)
                 #print "------ END OF IDENTIFIER TABLE ------"
 
