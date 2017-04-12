@@ -17,7 +17,9 @@ LOGGING_LEVEL = logging.DEBUG
 #opUnaire
 #opRel
 #opMult
-ad = 0
+adr = 0
+result=[]
+
 class AnaSynException(Exception):
 	def __init__(self, value):
 		self.value = value
@@ -27,8 +29,35 @@ class AnaSynException(Exception):
 ########################################################################				 	
 #### Syntactical Diagrams
 ########################################################################				 
-result=[]
+
+class SynAnalyser():
+	## Attribute to store the different syntaxical units
+	syntaxical_units = []
+			
+	## Saves the syntaxical units to a text file.
+	# @param filename Name of the output file (if "" then output to stdout)
+	def save_to_file(self, filename):
 	
+		print(self.syntaxical_units)
+		print filename
+		output_file = None
+		if filename != "":
+			try:
+				output_file = open(filename, 'w')
+			except:
+				print "Error: can\'t open output file!"
+				return
+		else:
+			print "!!"
+			output_file = sys.stdout
+		
+		for i,su in enumerate(self.syntaxical_units):
+			print i,su
+			output_file.write("%s \n" % su)
+			
+		if filename != "":
+			output_file.close()
+		
 
 def program(lexical_analyser):
 	result.append("debutProg()")
@@ -233,14 +262,6 @@ def instr(lexical_analyser):
 		logger.error("Unknown Instruction <"+ lexical_analyser.get_value() +">!")
 		raise AnaSynException("Unknown Instruction <"+ lexical_analyser.get_value() +">!")
 
-###B.23 Lingling
-def appelProc(lexical_analyser):
-	ident = lexical_analyser.acceptIdentifier()
-	lexical_analyser.acceptCharacter("(")
-	if not lexical_analyser.isCharacter(")"):
-		listePe(lexical_analyser);
-	lexical_analyser.acceptCharacter(")")
-	
 def listePe(lexical_analyser):
 	expression(lexical_analyser)
 	if lexical_analyser.isCharacter(","):
@@ -402,14 +423,6 @@ def elemPrim(lexical_analyser):
 		logger.error("Unknown Value!")
 		raise AnaSynException("Unknown Value!")
 
-## B.36 Lingling
-def appelFonct(lexical_analyser):
-	ident = lexical_analyser.acceptIdentifier()
-	lexical_analyser.acceptCharacter("(")
-	if not lexical_analyser.isCharacter(")"):
-		listePe(lexical_analyser)
-	lexical_analyser.acceptCharacter(")")
-	
 def valeur(lexical_analyser):
 	if lexical_analyser.isInteger():
 		entier = lexical_analyser.acceptInteger()
@@ -535,7 +548,7 @@ def main():
 	outputFilename = args.outputfile
 	
   	# create logger      
-        LOGGING_LEVEL = args.debug
+  	LOGGING_LEVEL = args.debug
 	logger.setLevel(LOGGING_LEVEL)
 	ch = logging.StreamHandler()
 	ch.setLevel(LOGGING_LEVEL)
@@ -569,24 +582,13 @@ def main():
                 #print str(identifierTable)
                 print "------ END OF IDENTIFIER TABLE ------"
 
-
-        if outputFilename != "":
-                try:
-                        output_file = open(outputFilename, 'w')
-                except:
-                        print "Error: can\'t open output file!"
-                        return
-        else:
-                output_file = sys.stdout
+	syn_analyser = SynAnalyser()	
+	syn_analyser.syntaxical_units.append("h222ah")
+	syn_analyser.syntaxical_units.append("hah")
+	syn_analyser.syntaxical_units.append("hah")
+	syn_analyser.syntaxical_units.append("hah")
+	syn_analyser.save_to_file(outputFilename) 
 	
-        # Outputs the generated code to a file
-        #instrIndex = 0
-        #while instrIndex < codeGenerator.get_instruction_counter():
-        #        output_file.write("%s\n" % str(codeGenerator.get_instruction_at_index(instrIndex)))
-        #        instrIndex += 1
-			
-        if outputFilename != "":
-                output_file.close() 
 
 ########################################################################				 
 
