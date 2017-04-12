@@ -17,6 +17,7 @@ LOGGING_LEVEL = logging.DEBUG
 #opUnaire
 #opRel
 #opMult
+ad = 0
 class AnaSynException(Exception):
 	def __init__(self, value):
 		self.value = value
@@ -25,17 +26,19 @@ class AnaSynException(Exception):
 
 ########################################################################				 	
 #### Syntactical Diagrams
-########################################################################				 	
+########################################################################				 
+result=[]
+	
 
 def program(lexical_analyser):
-	#debutProg()
+	result.append("debutProg()")
 	'''
-	tra(), si il n y a pas d'autre fonctions, on l'a pas besoin, il faut mettre apres le "procedure" ou "fonction"
+	tra(), si il n y a pas d'autre fonctions, on n'en a pas besoin, il faut mettre apres la "procedure" ou "fonction"
 	'''
 	specifProgPrinc(lexical_analyser)
 	lexical_analyser.acceptKeyword("is")
 	corpsProgPrinc(lexical_analyser)
-	#finProg()
+	result.append("finProg()")
 	
 def specifProgPrinc(lexical_analyser):
 	lexical_analyser.acceptKeyword("procedure")
@@ -209,7 +212,7 @@ def instr(lexical_analyser):
 			#empiler(ad(ident))
 			#si ident est la variable locale
 			#empilerAd(ad(ident))
-			#si ident est la variable paramètre
+			#si ident est la variable parametre
 			#empilerParam(ad(ident))			
 			lexical_analyser.acceptSymbol(":=")
                         expression(lexical_analyser)
@@ -416,7 +419,7 @@ def valeur(lexical_analyser):
 			#empiler(ad(ident))
 			#si ident est la variable locale
 			#empilerAd(ad(ident))
-			#si ident est la variable paramètre
+			#si ident est la variable parametre
 			#empilerParam(ad(ident))	
 		#valeurPile()
                 return "integer"
@@ -452,7 +455,7 @@ def es(lexical_analyser):
 			#empiler(ad(ident))
 			#si ident est la variable locale
 			#empilerAd(ad(ident))
-			#si ident est la variable paramètre
+			#si ident est la variable parametre
 			#empilerParam(ad(ident))	
 		#get()
 	elif lexical_analyser.isKeyword("put"):
@@ -469,13 +472,14 @@ def es(lexical_analyser):
 def boucle(lexical_analyser):
 	logger.debug("parsing while loop: ")
 	lexical_analyser.acceptKeyword("while")
-
+	#(ad1)
 	expression(lexical_analyser)
-
+	#tze(ad2)
 	lexical_analyser.acceptKeyword("loop")
 	suiteInstr(lexical_analyser)
-
+	#tra(ad1)
 	lexical_analyser.acceptKeyword("end")
+	#(ad2)
 	logger.debug("end of while loop ")
 
 def altern(lexical_analyser):
@@ -483,17 +487,19 @@ def altern(lexical_analyser):
 	lexical_analyser.acceptKeyword("if")
 
 	expression(lexical_analyser)
-       
+    #tze(ad1)   
 	lexical_analyser.acceptKeyword("then")
 	suiteInstr(lexical_analyser)
-
+	#tra(ad2)
 	if lexical_analyser.isKeyword("else"):
 		lexical_analyser.acceptKeyword("else")
+		#(ad1)
 		suiteInstr(lexical_analyser)
        
 	lexical_analyser.acceptKeyword("end")
 	logger.debug("end of if")
-
+	#(ad2)
+	
 def retour(lexical_analyser):
 	logger.debug("parsing return instruction")
 	lexical_analyser.acceptKeyword("return")
