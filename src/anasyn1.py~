@@ -36,22 +36,23 @@ class Scope: #Definition de la classe Scope
 	nom=None
 	tableau_identificateur = []
 
-	def __init__(self):
-		nom=None
-		tableau_identificateur = []
-
-	#def __init__(self, nom):
-		#self.nom = nom
+	def __init__(self, nom=None):
+		if nom is None:
+			nom = None
+		else:
+			self.nom = nom
+		
 
 	def ajout(self,identifierTable):
-		print "coucouc"
-		for i in identifierTable:
-			self.tableau_identificateur.append(i)
+		print "scope.ajout"
+		#for i in identifierTable:
+		self.tableau_identificateur.append(i)
 
 	def afficher(self):
-		print str (self.nom)
+		print "scope.afficher"
+		print str (self.tableau_identificateur)
 		for i in self.tableau_identificateur:
-			i.afficher()
+			print str (i)
 
 	def setNom(self, nom):
 		self.nom = nom
@@ -66,7 +67,7 @@ class Identificateur: #Definition de la classe Identificateur
 		self.type = nature
 	
 	def afficher(self):
-		print "coucouc"
+		print "ident.afficher"
 		print str (self.nom+self.type)
 
 class AnaSynException(Exception):
@@ -97,6 +98,7 @@ def specifProgPrinc(lexical_analyser):
 	#On a trouve le nom de du programme
 	ident = lexical_analyser.acceptIdentifier()
 	scope.setNom(ident)
+	#scope.afficher()
 	#tablesymbole.ajout(scope)
 	logger.debug("Name of program : "+ident)
 
@@ -144,14 +146,15 @@ def procedure(lexical_analyser):
 	lexical_analyser.acceptKeyword("procedure")
 	#On a trouve le nom d'une procedure
 	ident = lexical_analyser.acceptIdentifier()
-	scope = Scope(ident)
+	#scope = Scope(ident)
 
 	logger.debug("Name of procedure : "+ident)
        
 	partieFormelle(lexical_analyser)
 
 	lexical_analyser.acceptKeyword("is")
-	tablesymbole.ajout(scope)
+	#tablesymbole.ajout(scope)
+	scope.ajout(ident)
 	corpsProc(lexical_analyser)
 
        

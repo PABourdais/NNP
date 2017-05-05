@@ -18,58 +18,56 @@ identifierTable = []
 tmpVectorTable = []
 
 class TableSymbole: #Definition de la classe Symbole
+	
+	table_symbole = []
+	
 	def __init__(self):
 		self.table_symbole = []
 
 	def afficherTableSymbole(self):
-		for i in self.table_symbole :
-			i.afficherScope()
+		for i in self.table_symbole:
+			i.afficher()
 
-	def ajoutScope(self,tableau_identificateur):
-		for j in tableau_identificateur:
-			self.table_symbole.append(j)
+	def ajout(self,scope):
+		self.table_symbole.append(scope)
 
 class Scope: #Definition de la classe Scope
 	#Constructeur de la classe Scope
-	def __init__(self, nom):
-		self.nom = nom 
-		self.tableau_identificateur = []
+	nom=None
+	tableau_identificateur = []
 
-	def ajoutIdentificateur(self,identifierTable):
+	def __init__(self):
+		nom=None
+		tableau_identificateur = []
+
+	def __init__(self, nom):
+		self.nom = nom
+
+	def ajout(self,identifierTable):
+		print "coucouc"
 		for i in identifierTable:
 			self.tableau_identificateur.append(i)
 
-	def afficherScope(self):
-		print str (self.nom)	
-		print str("coucou1")			
+	def afficher(self):
+		print str (self.nom)
 		for i in self.tableau_identificateur:
-			print str("coucou1")
-			i.afficherIdentificateur()
+			i.afficher()
+
+	def setNom(self, nom):
+		self.nom = nom
 
 class Identificateur: #Definition de la classe Identificateur	
 	#Constructeur de la classe Identificateur
 	def __init__(self, nom):
 		self.nom = nom
-		self.nature = None
-		self.adresse = None
-		self.taille = None
-		self.scope = None
+		self.type = None
 	
-	def setNature(self, nature):
-		self.nature = nature
+	def setType(self, nature):
+		self.type = nature
 	
-	def setAdresse(self, adresse):
-		self.adresse = adresse
-
-	def setTaille(self, taille):
-		self.taille = taille
-
-	def setScope(self, scope):
-		self.scope = scope
-	
-	def afficherIdentificateur(self):
-		print str("coucou2")
-		print str (self.nom+self.nature)
+	def afficher(self):
+		print "coucouc"
+		print str (self.nom+self.type)
 
 class AnaSynException(Exception):
 	def __init__(self, value):
@@ -77,9 +75,15 @@ class AnaSynException(Exception):
 	def __str__(self):
                 return repr(self.value)
 
+
 ########################################################################				 	
 #### Syntactical Diagrams
-########################################################################				 	
+########################################################################				 
+tablesymbole = TableSymbole()
+scope = Scope()
+tablesymbole.ajout(scope)
+
+
 
 def program(lexical_analyser):
 	specifProgPrinc(lexical_analyser)
@@ -87,11 +91,16 @@ def program(lexical_analyser):
 	corpsProgPrinc(lexical_analyser)
 	
 def specifProgPrinc(lexical_analyser):
+	global tablesymbole
+	global scope
 	lexical_analyser.acceptKeyword("procedure")
 	#On a trouve le nom de du programme
 	ident = lexical_analyser.acceptIdentifier()
+	scope.setNom(ident)
+	#tablesymbole.ajout(scope)
 	logger.debug("Name of program : "+ident)
-	
+
+
 def  corpsProgPrinc(lexical_analyser):
 	if not lexical_analyser.isKeyword("begin"):
 		logger.debug("Parsing declarations")
@@ -130,20 +139,21 @@ def declaOp(lexical_analyser):
 		fonction(lexical_analyser)
 
 def procedure(lexical_analyser):
-	global tablesymbole
+	global tablesymbole 
 	global scope
 	lexical_analyser.acceptKeyword("procedure")
 	#On a trouve le nom d'une procedure
 	ident = lexical_analyser.acceptIdentifier()
 	scope = Scope(ident)
-	tablesymbole = TableSymbole()
-	tablesymbole.ajoutScope(scope)
+
 	logger.debug("Name of procedure : "+ident)
        
 	partieFormelle(lexical_analyser)
 
 	lexical_analyser.acceptKeyword("is")
+	tablesymbole.ajout(scope)
 	corpsProc(lexical_analyser)
+
        
 
 def fonction(lexical_analyser):
@@ -151,7 +161,7 @@ def fonction(lexical_analyser):
 	ident = lexical_analyser.acceptIdentifier()
 	logger.debug("Name of function : "+ident)
 	
-        partieFormelle(lexical_analyser)
+	partieFormelle(lexical_analyser)
 
 	lexical_analyser.acceptKeyword("return")
 	nnpType(lexical_analyser)
@@ -211,17 +221,17 @@ def nnpType(lexical_analyser):
 		lexical_analyser.acceptKeyword("integer")
 		#On modifie la nature de l'identificateur en integer
 		for i in tmpVectorTable:			
-			i.setNature("integer")
+			i.setType("integer")
 			identifierTable.append(i) 
 		logger.debug("integer type")
 	elif lexical_analyser.isKeyword("boolean"):
 		lexical_analyser.acceptKeyword("boolean")
 		#On modifie la nature de l'identificateur en boolean
 		for i in tmpVectorTable:		
-			i.setNature("boolean")
+			i.setType("boolean")
 			identifierTable.append(i)
-		scope.ajoutIdentificateur(identifierTable)
-		tablesymbole.ajoutScope(scope.tableau_identificateur)
+		scope.ajout(identifierTable)
+		tablesymbole.ajout(scope)
 		#tablesymbole.tableau_identificateur.append(identifierTable)
 		logger.debug("boolean type")            
 	else:
@@ -554,7 +564,8 @@ def retour(lexical_analyser):
 
 ########################################################################				 	
 def main():
- 	
+ 	tableaudessymboles = Scope("Global")
+	
 	parser = argparse.ArgumentParser(description='Do the syntactical analysis of a NNP program.')
 	parser.add_argument('inputfile', type=str, nargs=1, help='name of the input source file')
 	parser.add_argument('-o', '--outputfile', dest='outputfile', action='store', \
