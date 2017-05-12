@@ -35,14 +35,15 @@ opMult1 = ""
 opUnaire1 = "+"
 
 def program(lexical_analyser):
-	result.append("debutProg()")
+	result.append("debutProg")
 	'''
 	tra(), si il n y a pas d'autre fonctions, on l'a pas besoin, il faut mettre apres le "procedure" ou "fonction"
 	'''
+	result.append("tra adr(MainBegin)")
 	specifProgPrinc(lexical_analyser)
 	lexical_analyser.acceptKeyword("is")
 	corpsProgPrinc(lexical_analyser)
-	result.append("finProg()")
+	result.append("finProg")
 	
 def specifProgPrinc(lexical_analyser):
 	lexical_analyser.acceptKeyword("procedure")
@@ -96,14 +97,14 @@ def procedure(lexical_analyser):
 
 	lexical_analyser.acceptKeyword("is")
 	corpsProc(lexical_analyser)
-	result.append("tra(adr(MainBegin))")
+	#result.append("tra(adr(MainBegin))")
        
 
 def fonction(lexical_analyser):
 	lexical_analyser.acceptKeyword("function")
 	ident = lexical_analyser.acceptIdentifier()
 	logger.debug("Name of function : "+ident)
-	result.append("tra(adr(MainBegin))")
+	#result.append("tra(adr(MainBegin))")
         partieFormelle(lexical_analyser)
 
 	lexical_analyser.acceptKeyword("return")
@@ -185,7 +186,7 @@ def declaVar(lexical_analyser):
 	nnpType(lexical_analyser)
 	lexical_analyser.acceptCharacter(";")
 		
-	str1 = 'reserver('+str(nbVarDeclare)+')'
+	str1 = 'reserver '+str(nbVarDeclare)
 	result.append(str1)
 	
 
@@ -224,17 +225,18 @@ def instr(lexical_analyser):
 			#if ident.type()=="variable globale"
 			#si ident est la variable globale
 			#str1 = 'empiler('+str(ad(ident))+')'
-			str1 = 'empiler(adr())'			
-			result.append("empilerXX(ad(instr"+ident+"))")
+			str1 = 'empiler adr()'		
+			result.append("empilerXX ad("+ident+")")
 			#si ident est la variable locale
 			#empilerAd(ad(ident))
 			#si ident est la variable parametre
 			#empilerParam(a (ident))			
 			lexical_analyser.acceptSymbol(":=")
                         expression(lexical_analyser)
-                        result.append("affectation()")
+                        result.append("affectation")
 			logger.debug("parsed affectation")
 		elif lexical_analyser.isCharacter("("):
+			result.append("reserverBloc")
 			lexical_analyser.acceptCharacter("(")
 			if not lexical_analyser.isCharacter(")"):
 				listePe(lexical_analyser)
@@ -254,7 +256,7 @@ def listePe(lexical_analyser):
 	expression(lexical_analyser)
 	global nbVarParam
 	nbVarParam=nbVarParam+1
-	print str(nbVarParam)
+	#print str(nbVarParam)
 	if lexical_analyser.isCharacter(","):
 		lexical_analyser.acceptCharacter(",")
 		listePe(lexical_analyser)
@@ -267,7 +269,7 @@ def expression(lexical_analyser):
 	if lexical_analyser.isKeyword("or"):
 		lexical_analyser.acceptKeyword("or")
 		exp1(lexical_analyser)
-		result.append("ou()")
+		result.append("ou")
         
 def exp1(lexical_analyser):
 	logger.debug("parsing exp1")
@@ -276,7 +278,7 @@ def exp1(lexical_analyser):
 	if lexical_analyser.isKeyword("and"):
 		lexical_analyser.acceptKeyword("and")
 		exp2(lexical_analyser)
-		result.append("et()")
+		result.append("et")
         
 def exp2(lexical_analyser):
 	'''	
@@ -315,22 +317,22 @@ def opRel(lexical_analyser):
         
 	if	lexical_analyser.isSymbol("<"):
 		lexical_analyser.acceptSymbol("<")
-        	opRel1 = "inf()"
+        	opRel1 = "inf"
 	elif lexical_analyser.isSymbol("<="):
 		lexical_analyser.acceptSymbol("<=")
-        	opRel1 = "infeg()"
+        	opRel1 = "infeg"
 	elif lexical_analyser.isSymbol(">"):
 		lexical_analyser.acceptSymbol(">")
-        	opRel1 = "sup()"
+        	opRel1 = "sup"
 	elif lexical_analyser.isSymbol(">="):
 		lexical_analyser.acceptSymbol(">=")
-        	opRel1 = "supeg()"
+        	opRel1 = "supeg"
 	elif lexical_analyser.isSymbol("="):
 		lexical_analyser.acceptSymbol("=")
-        	opRel1 = "egal()"
+        	opRel1 = "egal"
 	elif lexical_analyser.isSymbol("/="):
 		lexical_analyser.acceptSymbol("/=")
-        	opRel1 = "diff()"
+        	opRel1 = "diff"
 	else:
 		msg = "Unknown relationnal operator <"+ lexical_analyser.get_value() +">!"
 		logger.error(msg)
@@ -349,11 +351,11 @@ def opAdd(lexical_analyser):
 	logger.debug("parsing additive operator: " + lexical_analyser.get_value())
 	if lexical_analyser.isCharacter("+"):
 		lexical_analyser.acceptCharacter("+")
-		opAdd1 = "add()"
+		opAdd1 = "add"
                 
 	elif lexical_analyser.isCharacter("-"):
 		lexical_analyser.acceptCharacter("-")
-		opAdd1 = "sous()"
+		opAdd1 = "sous"
                 
 	else:
 		msg = "Unknown additive operator <"+ lexical_analyser.get_value() +">!"
@@ -374,10 +376,10 @@ def opMult(lexical_analyser):
 	logger.debug("parsing multiplicative operator: " + lexical_analyser.get_value())
 	if lexical_analyser.isCharacter("*"):
 		lexical_analyser.acceptCharacter("*")
-        	opMult1 = "mult()"        
+        	opMult1 = "mult"        
 	elif lexical_analyser.isCharacter("/"):
 		lexical_analyser.acceptCharacter("/")
-        	opMult1 = "div()"        
+        	opMult1 = "div"        
 	else:
 		msg = "Unknown multiplicative operator <"+ lexical_analyser.get_value() +">!"
 		logger.error(msg)
@@ -415,10 +417,10 @@ def opUnaire(lexical_analyser):
 	logger.debug("parsing unary operator: " + lexical_analyser.get_value())  
 	if lexical_analyser.isCharacter("-"):
 		lexical_analyser.acceptCharacter("-")
-        	opUnaire1 = "moins()"        
+        	opUnaire1 = "moins"        
 	elif lexical_analyser.isKeyword("not"):
 		lexical_analyser.acceptKeyword("not")
-        	opUnaire1 = "non()"  
+        	opUnaire1 = "non"  
 	elif lexical_analyser.isCharacter("+"):
 		lexical_analyser.acceptCharacter("+")
 		opUnaire1="+"         
@@ -440,21 +442,21 @@ def elemPrim(lexical_analyser):
 		global nbVarParam 
 		nbVarParam = 0
 		if lexical_analyser.isCharacter("("):			# Appel fonct
-			
-			result.append("reserverBloc()")
+
+			result.append("reserverBloc")
 			lexical_analyser.acceptCharacter("(")
 			if not lexical_analyser.isCharacter(")"):
 				listePe(lexical_analyser)
 				
 			lexical_analyser.acceptCharacter(")")
-			result.append("traStat(ad("+ident+"),"+str(nbVarParam)+")")
+			result.append("traStat ad("+ident+"),"+str(nbVarParam))
 			logger.debug("parsed procedure call")
 
 			logger.debug("Call to function: " + ident)
 		else:
 			logger.debug("Use of an identifier as an expression: " + ident)
                         # ...
-			result.append("empilerXX(ad("+ident+"))")
+			result.append("empilerXX ad("+ident+")")
 	else:
 		logger.error("Unknown Value!")
 		raise AnaSynException("Unknown Value!")
@@ -463,7 +465,7 @@ def valeur(lexical_analyser):
 	if lexical_analyser.isInteger():
 		entier = lexical_analyser.acceptInteger()
 		logger.debug("integer value: " + str(entier))
-		result.append("empiler("+str(entier)+")")
+		result.append("empiler "+str(entier))
 		##si ident est la variable globale
 			#empiler(ad(ident))
 			#si ident est la variable locale
@@ -506,15 +508,15 @@ def es(lexical_analyser):
 			#empilerAd(ad(ident))
 			#si ident est la variable parametre
 			#empilerParam(ad(ident))
-		result.append("empiler(adr("+ident+"))")	
-		result.append("get()")
+		result.append("empilerXX(adr("+ident+"))")	
+		result.append("get")
 	elif lexical_analyser.isKeyword("put"):
 		lexical_analyser.acceptKeyword("put")
 		lexical_analyser.acceptCharacter("(")
 		expression(lexical_analyser)
 		lexical_analyser.acceptCharacter(")")
 		logger.debug("Call to put")
-		result.append("put()")
+		result.append("put")
 	else:
 		logger.error("Unknown E/S instruction!")
 		raise AnaSynException("Unknown E/S instruction!")
@@ -522,7 +524,6 @@ def es(lexical_analyser):
 def boucle(lexical_analyser):
 	logger.debug("parsing while loop: ")
 	lexical_analyser.acceptKeyword("while")
-
 	expression(lexical_analyser)
 
 	lexical_analyser.acceptKeyword("loop")
@@ -552,7 +553,7 @@ def retour(lexical_analyser):
 	logger.debug("parsing return instruction")
 	lexical_analyser.acceptKeyword("return")
 	expression(lexical_analyser)
-	result.append("retourFonc()")
+	result.append("retourFonc")
 
 	
 
@@ -632,10 +633,24 @@ def main():
         #while instrIndex < codeGenerator.get_instruction_counter():
         #        output_file.write("%s\n" % str(codeGenerator.get_instruction_at_index(instrIndex)))
         #        instrIndex += 1
-			
+		
         if outputFilename != "":
                 output_file.close() 
-	print(result)
+                
+                
+	adr = 0	
+	orig_stdout = sys.stdout
+	f = open('instr.txt','w')
+	sys.stout = f
+	for instr in result:
+		adr =adr+1  
+		print(str(adr)+'\t'+instr)
+		f.write(instr+'\n')
+			
+	sys.stdout = orig_stdout
+	f.close
+			   	
+	
 ########################################################################				 
 
 if __name__ == "__main__":
