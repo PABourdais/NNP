@@ -36,12 +36,8 @@ class Scope: #Definition de la classe Scope
 	nom=None
 	tableau_identificateur = []
 
-	def __init__(self):
-		nom=None
-		tableau_identificateur = []
-
-	#def __init__(self, nom):
-		#self.nom = nom
+	def __init__(self, nom):
+		self.nom = nom
 
 	def ajout(self,identifierTable):
 		print "coucouc"
@@ -53,8 +49,6 @@ class Scope: #Definition de la classe Scope
 		for i in self.tableau_identificateur:
 			i.afficher()
 
-	def setNom(self, nom):
-		self.nom = nom
 
 class Identificateur: #Definition de la classe Identificateur	
 	#Constructeur de la classe Identificateur
@@ -80,8 +74,8 @@ class AnaSynException(Exception):
 #### Syntactical Diagrams
 ########################################################################				 
 tablesymbole = TableSymbole()
-scope = Scope()
-tablesymbole.ajout(scope)
+#scope = Scope()
+
 
 
 
@@ -96,8 +90,8 @@ def specifProgPrinc(lexical_analyser):
 	lexical_analyser.acceptKeyword("procedure")
 	#On a trouve le nom de du programme
 	ident = lexical_analyser.acceptIdentifier()
-	scope.setNom(ident)
-	#tablesymbole.ajout(scope)
+	scope = Scope(ident)
+	tablesymbole.ajout(scope)
 	logger.debug("Name of program : "+ident)
 
 
